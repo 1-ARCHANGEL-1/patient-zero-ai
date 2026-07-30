@@ -237,3 +237,81 @@ export function getMockChatResponse(question: string): string {
   }
   return "Based on the surveillance footage analyzed so far, I've identified 5 individuals with potential exposure to Patient Zero across 4 locations. Ask about specific people, rooms, or timestamps for more detail.";
 }
+
+/**
+ * Fallback exposure summary served by /api/analyze when the real
+ * TwelveLabs -> OpenAI -> Strands pipeline (services/strands.ts) isn't
+ * reachable, e.g. no real video has been indexed yet.
+ */
+export const mockExposureSummary = {
+  summary:
+    "Patient Zero had direct contact with 5 individuals across 4 rooms between 08:03 and 08:31. Nurse Sarah and Dr. Mehta show the highest exposure confidence and should be prioritized for monitoring.",
+  timeline,
+  watchList: people.filter((person) => person.risk).map((person) => ({ person })),
+};
+
+/**
+ * Fallback exposure tree graph served by the "generate exposure graph" chat
+ * trigger (/api/chat) and shown on /graph and /watchlist when no real
+ * investigation data exists yet.
+ */
+export const mockExposureTreeGraph = {
+  patientZero: {
+    id: "p0",
+    label: "Patient Zero",
+    description: "Index case",
+    wearing: "Light-colored hoodie",
+  },
+  exposedPersons: [
+    {
+      id: "p1",
+      label: "Patient 1",
+      description: "Nurse Sarah",
+      wearing: "Blue scrubs",
+      appearances: 3,
+      distanceFromPatientZero: "close" as const,
+      timeNearPatientZero: 512,
+      riskLevel: "high" as const,
+    },
+    {
+      id: "p2",
+      label: "Patient 2",
+      description: "Dr. Mehta",
+      wearing: "White lab coat",
+      appearances: 2,
+      distanceFromPatientZero: "close" as const,
+      timeNearPatientZero: 257,
+      riskLevel: "high" as const,
+    },
+    {
+      id: "p3",
+      label: "Patient 3",
+      description: "Receptionist",
+      wearing: "Grey cardigan",
+      appearances: 4,
+      distanceFromPatientZero: "medium" as const,
+      timeNearPatientZero: 105,
+      riskLevel: "medium" as const,
+    },
+    {
+      id: "p4",
+      label: "Patient 4",
+      description: "Visitor A",
+      wearing: "Green jacket",
+      appearances: 2,
+      distanceFromPatientZero: "medium" as const,
+      timeNearPatientZero: 130,
+      riskLevel: "medium" as const,
+    },
+    {
+      id: "p5",
+      label: "Patient 5",
+      description: "Visitor B",
+      wearing: "Black coat",
+      appearances: 1,
+      distanceFromPatientZero: "far" as const,
+      timeNearPatientZero: 32,
+      riskLevel: "low" as const,
+    },
+  ],
+};

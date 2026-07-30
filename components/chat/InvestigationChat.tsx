@@ -23,7 +23,7 @@ export function InvestigationChat() {
     <div className="flex flex-col gap-4">
       <SuggestedQuestions onSelect={handleSend} />
 
-      <div className="flex min-h-[220px] flex-col gap-3 rounded-[12px] border border-border bg-brand-surface/40 p-4">
+      <div className="flex min-h-[220px] flex-col gap-3 rounded-[12px] border-2 border-brand-black bg-white p-4">
         {messages.length === 0 ? (
           <p className="m-auto text-sm text-brand-muted">
             Ask a question about the investigation to get started.
@@ -38,13 +38,13 @@ export function InvestigationChat() {
           e.preventDefault();
           handleSend(input);
         }}
-        className="flex items-center gap-2"
+        className="flex items-center gap-1 rounded-[12px] border-2 border-brand-black bg-white p-1"
       >
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask about the investigation..."
-          className="h-10 flex-1 rounded-[8px]"
+          className="h-10 flex-1 rounded-[8px] border-none bg-transparent"
         />
         <Button type="submit" size="icon" className="h-10 w-10 shrink-0">
           <Send className="size-4" />

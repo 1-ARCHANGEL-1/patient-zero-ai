@@ -32,6 +32,7 @@ export interface GraphEdge {
   source: string;
   target: string;
   relationship: string;
+  timestamp?: string;
 }
 
 export interface TimelineEvent {
@@ -61,6 +62,7 @@ export interface UploadedVideo {
   sizeLabel: string;
   progress: number; // 0-100
   status: UploadStatus;
+  file: File;
 }
 
 export type AnalysisStage =
@@ -72,3 +74,28 @@ export type AnalysisStage =
   | "building-graph"
   | "generating-watchlist"
   | "ready";
+
+export type ExposureDistance = "close" | "medium" | "far";
+
+export interface PatientZeroNode {
+  id: string;
+  label: string;
+  description: string;
+  wearing: string;
+}
+
+export interface ExposedPersonNode {
+  id: string;
+  label: string;
+  description: string;
+  wearing: string;
+  appearances: number;
+  distanceFromPatientZero: ExposureDistance;
+  timeNearPatientZero: number; // seconds
+  riskLevel: RiskLevel;
+}
+
+export interface ExposureTreeGraphData {
+  patientZero: PatientZeroNode;
+  exposedPersons: ExposedPersonNode[];
+}

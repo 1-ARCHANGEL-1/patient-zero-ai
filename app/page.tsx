@@ -34,11 +34,15 @@ export default function Home() {
       <Navbar />
 
       <section className="flex flex-1 flex-col items-center justify-center px-6 py-24 text-center">
-        <Logo size={72} />
+        <Logo size={88} />
 
         <h1 className="mt-8 text-[56px] font-bold leading-[1.05] tracking-[-0.02em] text-brand-black">
           Patient Zero AI
         </h1>
+        <div
+          className="mx-auto mt-3 h-[3px] w-[60px] bg-brand-red"
+          aria-hidden="true"
+        />
 
         <p className="mt-4 text-xl text-brand-muted">
           Finding exposure before it becomes an outbreak.

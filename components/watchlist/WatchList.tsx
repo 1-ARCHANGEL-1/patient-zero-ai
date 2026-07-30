@@ -1,6 +1,9 @@
-import { people } from "@/lib/mockData";
+"use client";
+
+import { people as mockPeople } from "@/lib/mockData";
 import { RiskCard } from "@/components/watchlist/RiskCard";
-import type { RiskLevel } from "@/types";
+import { useInvestigation } from "@/context/InvestigationContext";
+import type { Person, RiskLevel } from "@/types";
 
 const SECTIONS: { risk: RiskLevel; label: string; headerClass: string }[] = [
   { risk: "high", label: "High Risk", headerClass: "text-risk-high" },
@@ -9,7 +12,11 @@ const SECTIONS: { risk: RiskLevel; label: string; headerClass: string }[] = [
 ];
 
 export function WatchList() {
-  const monitored = people.filter((p) => p.risk);
+  const { watchList } = useInvestigation();
+
+  const monitored: Person[] = watchList
+    ? watchList.map((entry) => entry.person).filter((person) => Boolean(person?.risk))
+    : mockPeople.filter((person) => person.risk);
 
   return (
     <div className="flex flex-col gap-10">

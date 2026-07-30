@@ -1,12 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { UploadCloud } from "lucide-react";
+import { Loader2, UploadCloud } from "lucide-react";
 import { useInvestigation } from "@/context/InvestigationContext";
 import { VideoCard } from "@/components/upload/VideoCard";
+import { Button } from "@/components/ui/button";
 
 export function VideoUpload() {
-  const { videos, addVideos, removeVideo } = useInvestigation();
+  const { videos, addVideos, removeVideo, isAnalyzing, startAnalysis } = useInvestigation();
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -53,6 +54,24 @@ export function VideoUpload() {
             <VideoCard key={video.id} video={video} onRemove={removeVideo} />
           ))}
         </div>
+      )}
+
+      {videos.length > 0 && (
+        <Button
+          type="button"
+          onClick={startAnalysis}
+          disabled={isAnalyzing}
+          className="h-10 w-full"
+        >
+          {isAnalyzing ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              Analyzing...
+            </>
+          ) : (
+            "Start Analysis"
+          )}
+        </Button>
       )}
     </div>
   );

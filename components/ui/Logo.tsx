@@ -1,9 +1,10 @@
 interface LogoProps {
   size?: number;
   className?: string;
+  centerColor?: string;
 }
 
-export function Logo({ size = 32, className }: LogoProps) {
+export function Logo({ size = 32, className, centerColor = "#0A0A0A" }: LogoProps) {
   return (
     <svg
       width={size}
@@ -18,7 +19,7 @@ export function Logo({ size = 32, className }: LogoProps) {
       <line x1="20" y1="20" x2="32" y2="9" stroke="#9CA3AF" strokeWidth="1" />
       <line x1="20" y1="20" x2="33" y2="24" stroke="#9CA3AF" strokeWidth="1" />
       <line x1="20" y1="20" x2="10" y2="32" stroke="#9CA3AF" strokeWidth="1" />
-      <circle cx="20" cy="20" r="6" fill="#0A0A0A" />
+      <circle cx="20" cy="20" r="6" fill={centerColor} />
       <circle cx="8" cy="10" r="3" fill="#DC2626" />
       <circle cx="32" cy="9" r="3" fill="#DC2626" />
       <circle cx="33" cy="24" r="3" fill="#DC2626" />
