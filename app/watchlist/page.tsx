@@ -6,8 +6,9 @@ import { Navbar } from "@/components/layout/Navbar";
 import { ExposedPersonCard } from "@/components/watchlist/ExposedPersonCard";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { mockExposureTreeGraph } from "@/lib/mockData";
 import type { ExposedPersonNode, ExposureTreeGraphData } from "@/types";
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
 
 const SECTIONS: {
   risk: ExposedPersonNode["riskLevel"];
@@ -36,7 +37,7 @@ const SECTIONS: {
 ];
 
 export default function WatchListPage() {
-  const [graphData, setGraphData] = useState<ExposureTreeGraphData | null>(null);
+  const [graphData, setGraphData] = useState<ExposureTreeGraphData | null | undefined>(undefined);
 
   useEffect(() => {
     async function load() {
@@ -54,20 +55,51 @@ export default function WatchListPage() {
       const stored = window.localStorage.getItem("patientZeroGraphData");
       if (stored) {
         try {
-          setGraphData(JSON.parse(stored));
-          return;
+          const parsed = JSON.parse(stored) as {
+            data?: ExposureTreeGraphData;
+            timestamp?: number;
+          };
+          const isFresh =
+            typeof parsed.timestamp === "number" && Date.now() - parsed.timestamp < ONE_HOUR_MS;
+          if (parsed.data && isFresh) {
+            setGraphData(parsed.data);
+            return;
+          }
         } catch {
-          // fall through to mock data below
+          // fall through to the empty state below
         }
       }
 
-      setGraphData(mockExposureTreeGraph);
+      // No current-investigation data — show the empty state rather than
+      // mock data, so this page only ever reflects the current investigation.
+      setGraphData(null);
     }
 
     load();
   }, []);
 
-  if (!graphData) return null;
+  if (graphData === undefined) return null;
+
+  if (!graphData) {
+    return (
+      <div className="flex min-h-screen flex-col animate-in fade-in duration-500">
+        <Navbar />
+        <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-12 text-center">
+          <p className="text-sm text-brand-muted">
+            No investigation data found.
+            <br />
+            Run an investigation first.
+          </p>
+          <Link
+            href="/dashboard"
+            className={cn(buttonVariants({ size: "lg" }), "mt-6 h-11 px-6 text-[15px]")}
+          >
+            Start Investigation
+          </Link>
+        </main>
+      </div>
+    );
+  }
 
   const persons = graphData.exposedPersons;
   const highCount = persons.filter((p) => p.riskLevel === "high").length;

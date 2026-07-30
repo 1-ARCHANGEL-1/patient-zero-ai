@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { generateExposureSummary } from "@/services/openai";
+import { clearExposureGraph } from "@/services/neo4j";
 import { mockExposureSummary } from "@/lib/mockData";
 
 // Hardcoded sample TwelveLabs-shaped analysis used only by the { test: true }
@@ -27,6 +28,13 @@ export async function POST(request: Request) {
 
   if (!isTest && analyses.length === 0) {
     return NextResponse.json({ error: "analyses is required" }, { status: 400 });
+  }
+
+  if (!isTest) {
+    // Every new analysis run starts completely fresh — wipe any exposure
+    // graph left over from a previous investigation before beginning this
+    // one. clearExposureGraph never throws (it catches internally).
+    await clearExposureGraph();
   }
 
   console.log(

@@ -45,33 +45,16 @@ function DashboardContent() {
 
   function handleGenerateWatchList() {
     if (!graphData) return;
-    window.localStorage.setItem("patientZeroGraphData", JSON.stringify(graphData));
+    window.localStorage.setItem(
+      "patientZeroGraphData",
+      JSON.stringify({ data: graphData, timestamp: Date.now() })
+    );
     router.push("/watchlist");
-  }
-
-  async function handleResetInvestigation() {
-    try {
-      await fetch("/api/graph/reset", { method: "POST" });
-    } catch {
-      // still proceed with the local reset below even if this fails
-    }
-    window.localStorage.removeItem("patientZeroGraphData");
-    window.location.reload();
   }
 
   return (
     <div className="flex min-h-screen flex-col animate-in fade-in duration-500">
-      <Navbar
-        right={
-          <button
-            type="button"
-            onClick={handleResetInvestigation}
-            className="rounded-[8px] px-2.5 py-1 text-xs font-medium text-white/60 transition-colors hover:bg-white/10 hover:text-white"
-          >
-            Reset Investigation
-          </button>
-        }
-      />
+      <Navbar />
 
       <div className="grid flex-1 grid-cols-1 lg:grid-cols-[280px_1fr_320px]">
         {/* Left panel */}

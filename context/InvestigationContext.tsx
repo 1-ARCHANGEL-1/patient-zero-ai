@@ -34,6 +34,7 @@ interface InvestigationContextValue {
 
   graphData: ExposureTreeGraphData | null;
   watchListData: ExposedPersonNode[] | null;
+  freshInvestigationNotice: boolean;
 
   activeVideoId: string | null;
   activeTimestamp: string | null;
@@ -66,10 +67,38 @@ export function InvestigationProvider({ children }: { children: React.ReactNode 
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [graphData, setGraphData] = useState<ExposureTreeGraphData | null>(null);
   const watchListData = graphData?.exposedPersons ?? null;
+  const [freshInvestigationNotice, setFreshInvestigationNotice] = useState(false);
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
   const [activeTimestamp, setActiveTimestamp] = useState<string | null>(null);
 
+  // Wipes every piece of state (and the persisted graph) belonging to a
+  // previous investigation, so a new one always starts completely clean.
+  function resetInvestigationState() {
+    window.localStorage.removeItem("patientZeroGraphData");
+    setGraphData(null);
+    setMessages([]);
+    setStage("idle");
+    setVideoIds([]);
+    setVideoNames({});
+    setVideoAnalyses([]);
+    setTimeline(null);
+    setWatchList(null);
+    setExposureSummary(null);
+    setAnalysisError(null);
+    setActiveVideoId(null);
+    setActiveTimestamp(null);
+  }
+
   function addVideos(files: File[]) {
+    const isNewInvestigation = videos.length > 0;
+
+    if (isNewInvestigation) {
+      resetInvestigationState();
+      setVideos([]);
+      setFreshInvestigationNotice(true);
+      setTimeout(() => setFreshInvestigationNotice(false), 4000);
+    }
+
     const newVideos: UploadedVideo[] = files.map((file) => ({
       id: `${file.name}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       name: file.name,
@@ -124,6 +153,10 @@ export function InvestigationProvider({ children }: { children: React.ReactNode 
     if (isAnalyzing) return;
     const pending = videos.filter((v) => v.file);
     if (pending.length === 0) return;
+
+    // Every new analysis run starts completely fresh — clear out anything
+    // left over from a previous investigation before beginning this one.
+    resetInvestigationState();
 
     setIsAnalyzing(true);
     setAnalysisError(null);
@@ -262,6 +295,7 @@ export function InvestigationProvider({ children }: { children: React.ReactNode 
       analysisError,
       graphData,
       watchListData,
+      freshInvestigationNotice,
       activeVideoId,
       activeTimestamp,
       setActiveVideo,
@@ -280,6 +314,7 @@ export function InvestigationProvider({ children }: { children: React.ReactNode 
       analysisError,
       graphData,
       watchListData,
+      freshInvestigationNotice,
       activeVideoId,
       activeTimestamp,
     ]

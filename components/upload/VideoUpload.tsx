@@ -7,7 +7,8 @@ import { VideoCard } from "@/components/upload/VideoCard";
 import { Button } from "@/components/ui/button";
 
 export function VideoUpload() {
-  const { videos, addVideos, removeVideo, isAnalyzing, startAnalysis } = useInvestigation();
+  const { videos, addVideos, removeVideo, isAnalyzing, startAnalysis, freshInvestigationNotice } =
+    useInvestigation();
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -19,6 +20,12 @@ export function VideoUpload() {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-sm font-semibold text-brand-black">Surveillance Videos</h2>
+
+      {freshInvestigationNotice && (
+        <p className="rounded-[8px] border border-border bg-brand-surface px-3 py-2 text-xs text-brand-muted">
+          Starting fresh investigation
+        </p>
+      )}
 
       <label
         onDragOver={(e) => {
